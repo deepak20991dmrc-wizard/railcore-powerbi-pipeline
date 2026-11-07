@@ -24,7 +24,7 @@ DATABASE_URL = os.environ["DATABASE_URL"]
 
 API_URL = (
     f"https://ir.railcore.tech/v1/"
-    f"trains/{TRAIN_NUMBER}/live-status"
+    f"trains/{TRAIN_NUMBER}/live"
 )
 
 
