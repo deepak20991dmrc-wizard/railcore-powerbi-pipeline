@@ -8,6 +8,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   collect:
     runs-on: ubuntu-latest
@@ -22,13 +25,22 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Collect train data
         env:
           RAILCORE_API_KEY: ${{ secrets.RAILCORE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
-        run: |
-          python collector.py
+        run: python collector.py
+
+      - name: Export Supabase data to CSV
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python export_csv.py
+
+      - name: Commit updated CSV
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update train observations CSV"
+          file_pattern: data/train_observations.csv
