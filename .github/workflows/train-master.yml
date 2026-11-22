@@ -4,6 +4,9 @@ name: Train Master Data Update
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-train-master:
     runs-on: ubuntu-latest
@@ -25,3 +28,14 @@ jobs:
           RAILCORE_API_KEY: ${{ secrets.RAILCORE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: python train_master.py
+
+      - name: Export train master data to CSV
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python export_train_master.py
+
+      - name: Commit updated train master CSV
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update train master data CSV"
+          file_pattern: data/train_master.csv
