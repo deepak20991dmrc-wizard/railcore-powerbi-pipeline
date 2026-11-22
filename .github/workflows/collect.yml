@@ -3,9 +3,8 @@ name: RailCore Train Data Collection
 
 on:
   schedule:
-    - cron: "0 20-23,0-8 * * *"
+    - cron: "0 */2 * * *"
       timezone: "Asia/Kolkata"
-
   workflow_dispatch:
 
 permissions:
@@ -31,8 +30,7 @@ jobs:
         env:
           RAILCORE_API_KEY: ${{ secrets.RAILCORE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
-        run: python collector.py
+        run: python collector_multi.py
 
       - name: Export Supabase data to CSV
         env:
